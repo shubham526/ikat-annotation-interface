@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>iKAT Evaluation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .container {
+            padding-bottom: 10px;
+            margin: 20px;
+        }
+        .rubric-pane {
+            padding-right: 0 !important;
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Intro and Start Button -->
+        <div class="col-md-7">
+            <h2 class="opaque-text">Welcome to the Response Evaluation system for TREC iKAT 2023</h2>
+            <p>
+                Thank you for participating in this evaluation. You will be presented with a series of conversations.
+                The USER asks a series of questions to the SYSTEM about a topic, while the SYSTEM responds accordingly.
+            </p>
+            <p><strong>Task:</strong> You must evaluate the last SYSTEM response of
+                each dialogue in terms of its <b>relevance</b>, <b>naturalness</b>, and <b>conciseness</b> in relation to the
+                entire conversation. Your judgements should be on a scale of 0 (lowest) to 3 (highest).
+            </p>
+            <p>
+                Please read each conversation carefully and provide your evaluation using the provided dropdown menus.
+            </p>
+            <a href="/index/1" class="btn btn-primary">Start Evaluation (Part 1)</a>
+        </div>
+
+        <!-- Rubric Side Pane -->
+        <div class="col-md-5 rubric-pane">
+            <div class="card">
+                <div class="card-header"><h3>Rubric</h3></div>
+                <div class="card-body">
+                    <!-- Your Rubric content goes here -->
+                    <ul>
+                        <li><strong>Relevance:</strong> Does the SYSTEM response follow on from previous utterances?</li>
+                        <ul>
+                            <li><strong>0 Not Relevant:</strong> Does not follow on from the previous utterances, seems to be completely
+                                random, to the current conversation, seems to be a completely different conversation.
+                            <li><strong>1 Partially Relevant:</strong> The response is partially off-topic; may
+                            be vaguely related, but too divergent from the conversation.
+                            <li><strong>2 Relevant:</strong> Follows on, but it is not entirely clear why the response is being presented.
+                            <li><strong>3 Highly Relevant:</strong> Directly follows on, and it is clear why the response is being presented.
+                        </ul>
+                        <li><strong>Naturalness:</strong> Does the system's response sound natural as if a human was speaking?</li>
+                        <ul>
+                            <li><strong>0 No:</strong> The response does not sound like something a human would say given the conversation.
+                            <li><strong>1 Somewhat:</strong> The response is a bit human-like. The response is somewhat
+                            understandable but may not be entirely fluent and natural.
+                            <li><strong>2 Yes (but not completely) :</strong> The response is almost human-like. The response is
+                            well-formed but is not natural.
+                            <li><strong>3 Yes:</strong> The response is very human-like and fluent.
+                        </ul>
+                        <li><strong>Conciseness:</strong> Is the system's response concise, or does it have unnecessary information?</li>
+                        <ul>
+                            <li><strong>0 No:</strong> The response is too wordy or too short. The response  may also contain lots of
+                                irrelevant content or no relevant information at all.
+                            <li><strong>1 Somewhat:</strong> The response is a bit wordy and does not  adequately address the user’s
+                            utterance (i.e. the response is longer than needed).
+                            <li><strong>2 Yes (but not completely) :</strong> The response is brief but not comprehensive
+                            (i.e. does not adequately address the user’s utterance/query or properly follow on from the conversation).
+                            <li><strong>3 Yes:</strong> The response is brief but comprehensive
+                            (the response was concise and to the point without too much/little other information).
+                        </ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
