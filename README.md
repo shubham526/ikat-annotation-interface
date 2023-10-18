@@ -45,6 +45,7 @@ conda create --name $env_name python=3.9
 conda activate $env_name
 ```
 where `$env_name` is the name of the Conda environment you wish to use. 
+
 3. Install Flask:
 ```
 conda install flask
@@ -88,7 +89,7 @@ We provide a [script](https://github.com/shubham526/ikat-annotation-interface/bl
 The script accepts two command-line arguments:
 - `--database`: The path to the SQLite database file.
 - `--save`: The path (including filename) where the organized data should be saved as a JSON file.
-- 
+
 ### Run the script
 ```
 python create_db.py --database $PATH_TO_DATABASE --save $PATH_TO_SAVE_JSON
