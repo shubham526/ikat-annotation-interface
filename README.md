@@ -16,7 +16,7 @@ The backend of the system is built using the Flask micro web framework. It handl
 
 ### Frontend
 
-The frontend provides a user-friendly interface for evaluating conversations. Its built using:
+The frontend provides a user-friendly interface for evaluating conversations. It's built using:
 
 - **HTML**: The structure of the web pages is defined using HTML. The provided code contains a main content area where conversations are displayed and a side pane that shows the evaluation rubric.
   
@@ -82,7 +82,7 @@ secret_key = secrets.token_hex(16)
 This generates a 32-character hexadecimal key. You can adjust the length by changing the argument passed to `token_hex()`. You should store this key in a safe place and use it to set the environment variable as described above.
 
 ## Downloading the evaluation results
-We provide a script to fetch evaluation results from an SQLite database and organize it by user. The organized data is then written to a JSON file. 
+We provide a [script](https://github.com/shubham526/ikat-annotation-interface/blob/main/write_results_to_json.py) to fetch evaluation results from an SQLite database and organize them by users. The organized data is then written to a JSON file. 
 
 ### Command-line arguments
 The script accepts two command-line arguments:
