@@ -1,5 +1,4 @@
 import sqlite3
-import hashlib
 import json
 
 # Connect to SQLite database (will create if it doesn't exist)
@@ -38,22 +37,6 @@ cursor.execute('''
     )
 ''')
 
-# Check if the 'admin' user already exists
-cursor.execute("SELECT * FROM users WHERE user_id = 'admin'")
-admin_exists = cursor.fetchone()
-
-# If 'admin' user doesn't exist, insert it with a hashed password
-if not admin_exists:
-    # Replace 'Alohomora@ikat2023' with the actual password
-    password = 'Alohomora@ikat2023'
-
-    # Hash the password using SHA-256 (you can choose a different hashing algorithm)
-    password_hash = hashlib.sha256(password.encode()).hexdigest()
-
-    cursor.execute("INSERT INTO users (user_id, password, is_admin) VALUES (?, ?, ?)",
-                   ('admin', password_hash, 1))
-
-
 # Insert conversations into table
 with open('data.json', 'r') as f:
     data = json.load(f)
@@ -66,3 +49,4 @@ for item in data:
 # Commit changes and close the connection
 conn.commit()
 conn.close()
+
