@@ -60,9 +60,42 @@
             background-color: #555; 
             color: #fff; 
         }
+        
+        .flash-messages {
+            list-style: none; /* Remove bullet points for list items */
+            padding: 10px;
+            background-color: #ffc107; /* Set a background color */
+            color: #333; /* Set text color */
+            border: 1px solid #ffc107; /* Add a border */
+            border-radius: 5px; /* Add rounded corners */
+            margin-top: 10px; /* Add some spacing at the top */
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .flash-messages li {
+            padding: 5px;
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
+    <!-- Display flashed messages -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flash-messages">
+              {% for message in messages %}
+                {% if 'error' in message %}
+                  <li class="error">{{ message }}</li>
+                {% elif 'info' in message %}
+                  <li class="info">{{ message }}</li>
+                {% else %}
+                  <li class="success">{{ message }}</li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
     <div class="container mt-5">
         <div class="page-header">
             <!-- Page heading -->

@@ -144,7 +144,8 @@ def signup():
 
         if existing_user:
             conn.close()
-            return "User already exists"
+            flash('User ID already exists. Please choose a different one.', 'error')  # Flash the error message
+            return redirect(url_for('signup'))
 
         # Insert the new user into the database
         cursor.execute("INSERT INTO users (user_id, password, is_admin) VALUES (?, ?, ?)",
