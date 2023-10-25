@@ -4,8 +4,7 @@ import hashlib
 import os
 
 app = Flask(__name__)
-# app.secret_key = os.environ.get('FLASK_SECRET_KEY')
-app.secret_key = '5538c01ccd1b985692c3669c6fe5f2b2'
+app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 ITEMS_PER_PAGE = 1
 
 
