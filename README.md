@@ -57,9 +57,9 @@ conda install flask
 ```
 4. Create the database:
 ```
-python create_db.py
+python create_db.py --data PATH_TO_DATA
 ```
-> **Note.** The script will attempt to read the data from a file called `data.json` in the same directory as this script. It will create a database called `ikat-database.db`, also in the same directory as this script. The app will expect the database to be present at this location.
+> **Note.** The script will attempt to read the data from a file specified with the `--data` path. See below how to create this file. It will create a database called `ikat-database.db`, in the same directory as this script. The app will expect the database to be present at this location.
 5. Set the flask environment variable:
 ```
 export FLASK_SECRET_KEY='your_secret_key_here'
@@ -87,6 +87,22 @@ secret_key = secrets.token_hex(16)
 ```
 This generates a 32-character hexadecimal key. You can adjust the length by changing the argument passed to `token_hex()`. You should store this key in a safe place and use it to set the environment variable as described above.
 
+## Creating the data for evaluation using the interface
+For iKAT 2023, we conducted a manual inspection of the topics and chose specific turns for response evaluation. From the submitted runs, we selected responses from 10 distinct runs. For every turn, the top response from each run was chosen for assessment. These selected turns were then mixed in a random order to form batches, with each batch containing 20 conversations. Our interface is configured to present each batch to a minimum of two users. Importantly, no individual user will be assigned more than two batches. However, after completing their assigned two batches, users will have the option to voluntarily annotate additional batches if they wish.
+
+We provide [our script](https://github.com/shubham526/ikat-annotation-interface/blob/main/create_response_evaluation_data.py) to create the batched data. 
+
+### Command-line arguments
+- `--turns`: Specifies the path to the file containing the turns that are to be judged. This file should list the turn IDs that you wish to evaluate.
+- `--topics`: Provides the path to the topics file. This file contains the details of the topics related to the turns.
+- `--runs`: Indicates the directory where the run files to be evaluated are located. These files contain the responses for the turns based on different runs.
+- `--save`: Designates the directory where the processed data will be saved. The script will generate batches of data and save them as JSON files in this directory.
+
+### Run the script
+```
+python script_name.py --turns PATH_TO_TURNS_FILE --topics PATH_TO_TOPICS_FILE --runs PATH_TO_RUNS_DIRECTORY --save PATH_TO_SAVE_DIRECTORY
+```
+
 ## Downloading the evaluation results
 We provide a [script](https://github.com/shubham526/ikat-annotation-interface/blob/main/write_results_to_json.py) to fetch evaluation results from an SQLite database and organize them by users. The organized data is then written to a JSON file. 
 
@@ -97,7 +113,7 @@ The script accepts two command-line arguments:
 
 ### Run the script
 ```
-python create_db.py --database $PATH_TO_DATABASE --save $PATH_TO_SAVE_JSON
+python write_results_to_json.py --database PATH_TO_DATABASE --save PATH_TO_SAVE_JSON
 ```
 
 ### Example JSON created by the script:
