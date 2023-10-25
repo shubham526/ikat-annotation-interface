@@ -4,8 +4,9 @@ import hashlib
 import os
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('FLASK_SECRET_KEY')
-ITEMS_PER_PAGE = 5
+# app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+app.secret_key = '5538c01ccd1b985692c3669c6fe5f2b2'
+ITEMS_PER_PAGE = 1
 
 
 def insert_evaluation_result(user_id, conversation_id, relevance, naturalness, conciseness):
@@ -25,30 +26,96 @@ def insert_evaluation_result(user_id, conversation_id, relevance, naturalness, c
 
 @app.route('/index/<int:page_num>', methods=['GET'])
 def index(page_num=1):
+    conn = sqlite3.connect('ikat-database.db')
+    cursor = conn.cursor()
+
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
-    conn = sqlite3.connect('ikat-database.db')
-    cursor = conn.cursor()
-    cursor.execute('''SELECT * FROM conversations''')
-    data = [{'question_id': row[0], 'conversation_context': row[1]} for row in cursor.fetchall()]
+    user_id = session['user_id']
+
+    # If batch_id is not in session, assign one
+    if 'batch_id' not in session:
+        # Count batches the user has already been assigned to
+        cursor.execute('''
+            SELECT COUNT(batch_id)
+            FROM batch_assignments
+            WHERE user_id = ?
+        ''', (user_id,))
+        batch_count = cursor.fetchone()[0]
+
+        # If the user has already been assigned to 2 batches, ask if they want more
+        if batch_count >= 2:
+            return redirect(url_for('ask_for_more_batches'))
+
+        # Get a batch that has been assigned to less than 2 users and not assigned to the current user
+        cursor.execute('''
+            SELECT b.batch_id
+            FROM batches b
+            LEFT JOIN batch_assignments ba ON b.batch_id = ba.batch_id AND ba.user_id != ?
+            WHERE ba.batch_id IS NULL OR ba.user_id != ?
+            GROUP BY b.batch_id
+            HAVING COUNT(ba.user_id) < 2
+            LIMIT 1
+        ''', (user_id, user_id))
+        batch = cursor.fetchone()
+
+        if not batch:
+            # No more batches for the user to evaluate
+            return redirect(url_for('thank_you'))
+
+        batch_id = batch[0]
+        session['batch_id'] = batch_id
+
+        # Assign this batch to the user
+        cursor.execute('''
+            INSERT INTO batch_assignments (user_id, batch_id)
+            VALUES (?, ?)
+        ''', (user_id, batch_id))
+        conn.commit()
+
+    # Get the conversations for the current batch
+    cursor.execute('''
+        SELECT conversation_id
+        FROM batch_conversations
+        WHERE batch_id = ?
+        ORDER BY conversation_id
+    ''', (session['batch_id'],))
+
+    batch_conversations = [row[0] for row in cursor.fetchall()]
+
+    if page_num > len(batch_conversations):
+        return redirect(url_for('thank_you'))
+
+    conversation_id = batch_conversations[page_num - 1]
+    cursor.execute('''
+        SELECT * FROM conversations WHERE conversation_id = ?
+    ''', (conversation_id,))
+
+    rows = cursor.fetchall()
+    data = []
+    for row in rows:
+        conversation_context = row[1]
+        response = row[4]
+
+        data.append({
+            'question_id': row[0],
+            'conversation_context': conversation_context,
+            'turn_id': row[2],
+            'run_id': row[3],
+            'response': response
+        })
     conn.close()
-    start = (page_num - 1) * ITEMS_PER_PAGE
-    end = start + ITEMS_PER_PAGE
-    data_to_show = data[start:end]
-    next_page = page_num + 1 if end < len(data) else None
-    prev_page = page_num - 1 if start > 0 else None
-    is_last_page = False
-    if not next_page:  # Assuming next_page will be None or False if it's the last page
-        is_last_page = True
+
+    next_page = page_num + 1 if page_num < len(batch_conversations) else None
+    prev_page = page_num - 1 if page_num > 1 else None
 
     return render_template(
         'index.html',
-        data=data_to_show,
+        data=data,
         next_page=next_page,
         prev_page=prev_page,
-        show_rubric=True,
-        is_last_page=is_last_page
+        show_rubric=True
     )
 
 
@@ -87,6 +154,19 @@ def evaluate():
     return jsonify({"message": "Success"})
 
 
+@app.route('/ask_for_more_batches', methods=['GET', 'POST'])
+def ask_for_more_batches():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        # User has decided to continue with more batches
+        session.pop('batch_id', None)  # Remove the current batch_id from the session
+        return redirect(url_for('index', page_num=1))  # Redirect to the index route to get the next batch
+
+    return render_template('ask_for_more_batches.html')  # Render a template asking the user if they want more batches
+
+
 @app.route('/intro', methods=['GET'])
 def intro():
     if 'user_id' not in session:
@@ -111,7 +191,6 @@ def login():
             hashed_password = hashlib.sha256(password.encode()).hexdigest()
             if user[1] == hashed_password:  # Check password for admin or allow non-admin
                 session['user_id'] = user[0]
-                session['is_admin'] = user[2]
                 return redirect(url_for('intro'))
 
         flash('Invalid credentials', 'error')  # Flash the error message
@@ -148,8 +227,8 @@ def signup():
             return redirect(url_for('signup'))
 
         # Insert the new user into the database
-        cursor.execute("INSERT INTO users (user_id, password, is_admin) VALUES (?, ?, ?)",
-                       (user_id, hashed_password, 0))  # Assuming non-admin user
+        cursor.execute("INSERT INTO users (user_id, password) VALUES (?, ?)",
+                       (user_id, hashed_password))  # Assuming non-admin user
 
         conn.commit()
         conn.close()

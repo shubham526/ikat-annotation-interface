@@ -22,6 +22,15 @@
             pointer-events: none; /* Makes sure the button doesn't receive click events when disabled */
         }
 
+        .response-box {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #e6e6e6;
+            margin-top: 10px;
+        }
+
+
 
         body {
             padding: 20px;
@@ -48,12 +57,27 @@
         .submit-btn:hover {
             background-color: #0056b3;
         }
+
+        @keyframes ellipsis {
+    0% { content: "."; }
+    33% { content: ".."; }
+    66% { content: "..."; }
+    100% { content: "."; }
+}
+
+.animated-ellipsis:after {
+    content: "...";
+    animation: ellipsis 1.5s infinite;
+}
+
     </style>
 </head>
 <body>
 
 <div class="container mt-4">
     <div class="row">
+        <!-- User Message Placeholder -->
+        <div id="userMessage" class="alert" style="display:none;"></div>
 
         <!-- Main Content -->
         <div class="col-md-7">
@@ -61,11 +85,33 @@
             {% for item in data %}
                 <div class="conversation-card">
                     <h3>Conversation</h3>
-                    <p>{{ item.conversation_context.replace("USER:", "<br><strong>USER:</strong>").replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>
+                    {% set first_utterance = item.conversation_context.split("\n", 1)[0].replace("USER:", "").strip() %}
+                    <p>
+                        <strong>USER:</strong>{{ first_utterance }}
+                        <span class="animated-ellipsis"></span>
+                    </p>
+                    <p>{{ item.conversation_context.replace("USER: " + first_utterance, "").replace("USER:", "<br><strong>USER:</strong>").replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>
+<!--                    {% set first_utterance = item.conversation_context.split("\n", 1)[0] %}-->
+<!--    <p><strong>USER:</strong>{{ first_utterance }} <br> <span class="animated-ellipsis"></span></p>-->
+<!--    <p>{{ item.conversation_context.replace(first_utterance, "").replace("USER:", "<br><strong>USER:</strong>").replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>-->
+<!--                    {% set first_utterance = item.conversation_context.split("\n", 1)[0] %}-->
+<!--                    <p>-->
+<!--                        <strong>USER:</strong>-->
+<!--                        {{ first_utterance }}-->
+<!--                        <br>-->
+<!--                        ...-->
+<!--                    </p>-->
+<!--                    <p>{{ item.conversation_context.replace(first_utterance, "").replace("USER:", "<br><strong>USER:</strong>").replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>-->
+
+                    <div class="response-box">
+                        <p>{{ item.response.replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>
+                    </div>
+
                     <h3>Evaluate</h3>
                     <div class="form-group">
                         <label>Relevance</label>
                         <select class="form-control relevance">
+                            <option value="" selected disabled hidden></option>
                             <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -75,6 +121,7 @@
                     <div class="form-group">
                         <label>Naturalness</label>
                         <select class="form-control naturalness">
+                            <option value="" selected disabled hidden></option>
                             <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -84,6 +131,7 @@
                     <div class="form-group">
                         <label>Conciseness</label>
                         <select class="form-control conciseness">
+                            <option value="" selected disabled hidden></option>
                             <option value="0">0</option>
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -184,40 +232,6 @@
 
 
 
-    // Function to update the "Next" button status based on answered questions
-    // function updateNextButtonStatus() {
-    //     let allSubmitted = true;
-    //     $(".submit-btn").each(function() {
-    //         if ($(this).attr("data-submitted") === "false") {
-    //             allSubmitted = false;
-    //             return false;  // Break out of the each loop
-    //         }
-    //     });
-    //
-    //     if (allSubmitted) {
-    //         $("#nextBtn").removeClass("disabled").removeAttr("disabled");
-    //     } else {
-    //         $("#nextBtn").addClass("disabled").attr("disabled", "disabled");
-    //     }
-    //
-    // }
-    // function updateProceedButtonStatus() {
-    //     let allSubmitted = true;
-    //     $(".submit-btn").each(function() {
-    //         if ($(this).attr("data-submitted") === "false") {
-    //             allSubmitted = false;
-    //             return false;  // Break out of the each loop
-    //         }
-    //     });
-    //
-    //     if (allSubmitted) {
-    //         $("#thankYouBtn").removeClass("disabled").removeAttr("disabled");
-    //     } else {
-    //         $("#thankYouBtn").addClass("disabled").attr("disabled", "disabled");
-    //     }
-    // }
-
-
 
     $(".submit-btn").click(function() {
         let card = $(this).closest('.conversation-card');
@@ -254,7 +268,7 @@
                     updateButtonStatus("#nextBtn");
                     updateButtonStatus("#thankYouBtn");
                 } else {
-                    alert(response.message);
+                    $("#userMessage").addClass("alert-danger").text(response.message).show();
                 }
             }
         });

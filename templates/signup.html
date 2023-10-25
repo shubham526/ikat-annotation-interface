@@ -57,10 +57,10 @@
         }
 
         .signup-form .btn-primary:hover {
-            background-color: #555; 
-            color: #fff; 
+            background-color: #555; /* Change the background color on hover */
+            color: #fff; /* Change the text color on hover */
         }
-        
+
         .flash-messages {
             list-style: none; /* Remove bullet points for list items */
             padding: 10px;
@@ -80,7 +80,7 @@
     </style>
 </head>
 <body>
-    <!-- Display flashed messages -->
+<!-- Display flashed messages -->
         {% with messages = get_flashed_messages() %}
           {% if messages %}
             <ul class="flash-messages">
@@ -101,6 +101,7 @@
             <!-- Page heading -->
             <h1>Welcome to the Response Evaluation System for TREC iKAT 2023</h1>
         </div>
+
         <div class="signup-container">
             <div class="signup-header">
                 <!-- Card heading -->
