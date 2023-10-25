@@ -26,6 +26,11 @@ The frontend provides a user-friendly interface for evaluating conversations. It
   
 - **Bootstrap**: Bootstrap components and scripts are used to enhance the user interface and provide a responsive design. This ensures that the web application looks good on both desktop and mobile devices.
 
+### Database Schema 
+![image](https://drive.google.com/uc?export=view&id=1TVdOVcjuuE4YHg_nrXaX2OKAziiwMBbV)
+
+The database is structured to capture and manage conversations, users, evaluations, and batches. At its core, the `conversations` table stores details of individual conversations, including context, turn ID, run ID, and responses. Users and their credentials are maintained in the `users` table. The `evaluations` table links users to conversations, recording evaluations on aspects like relevance, naturalness, and conciseness. Batches of conversations are managed through the `batches` table, with the `batch_conversations` table mapping which conversations belong to which batches. Additionally, the `batch_assignments` table facilitates a many-to-many relationship between users and batches, indicating which users are assigned to specific batches. This schema provides a comprehensive framework for tracking and evaluating conversations in batches, with the flexibility to assign batches to multiple users and gather evaluations seamlessly.
+
 
 ## Installation with Conda
 ### Prerequisites 
