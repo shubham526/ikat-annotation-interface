@@ -4,7 +4,8 @@ import hashlib
 import os
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+# app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+app.secret_key = '5538c01ccd1b985692c3669c6fe5f2b2'
 ITEMS_PER_PAGE = 1
 
 
@@ -43,8 +44,8 @@ def index(page_num=1):
         ''', (user_id,))
         batch_count = cursor.fetchone()[0]
 
-        # If the user has already been assigned to 2 batches, ask if they want more
-        if batch_count >= 2:
+        # If the user has already been assigned to 2 batches and hasn't decided to continue with more batches
+        if batch_count >= 2 and not session.get('continue_with_batches'):
             return redirect(url_for('ask_for_more_batches'))
 
         # Get a batch that has been assigned to less than 2 users and not assigned to the current user
@@ -65,6 +66,8 @@ def index(page_num=1):
 
         batch_id = batch[0]
         session['batch_id'] = batch_id
+        # Clear the continue_with_batches session variable after assigning a new batch
+        session.pop('continue_with_batches', None)
 
         # Assign this batch to the user
         cursor.execute('''
@@ -108,13 +111,15 @@ def index(page_num=1):
 
     next_page = page_num + 1 if page_num < len(batch_conversations) else None
     prev_page = page_num - 1 if page_num > 1 else None
+    is_last_page = False if next_page else True
 
     return render_template(
         'index.html',
         data=data,
         next_page=next_page,
         prev_page=prev_page,
-        show_rubric=True
+        show_rubric=True,
+        is_last_page=is_last_page
     )
 
 
@@ -160,10 +165,11 @@ def ask_for_more_batches():
 
     if request.method == 'POST':
         # User has decided to continue with more batches
+        session['continue_with_batches'] = True  # Set the session variable
         session.pop('batch_id', None)  # Remove the current batch_id from the session
         return redirect(url_for('index', page_num=1))  # Redirect to the index route to get the next batch
 
-    return render_template('ask_for_more_batches.html')  # Render a template asking the user if they want more batches
+    return render_template('ask_for_more_batches.html')
 
 
 @app.route('/intro', methods=['GET'])
@@ -259,3 +265,4 @@ def main():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
