@@ -4,21 +4,20 @@ import hashlib
 import os
 
 app = Flask(__name__)
-# app.secret_key = os.environ.get('FLASK_SECRET_KEY')
-app.secret_key = '5538c01ccd1b985692c3669c6fe5f2b2'
+app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 ITEMS_PER_PAGE = 1
 
 
-def insert_evaluation_result(user_id, conversation_id, relevance, naturalness, conciseness):
+def insert_evaluation_result(user_id, conversation_id, relevance, naturalness, conciseness, completeness):
     conn = sqlite3.connect('ikat-database.db')
     cursor = conn.cursor()
 
     # Insert a new evaluation into the evaluations table
     sql_evaluation = '''
-        INSERT INTO evaluations (user_id, conversation_id, relevance, naturalness, conciseness)
-        VALUES (?, ?, ?, ?, ?);
+        INSERT INTO evaluations (user_id, conversation_id, relevance, naturalness, conciseness, completeness)
+        VALUES (?, ?, ?, ?, ?, ?);
     '''
-    cursor.execute(sql_evaluation, (user_id, conversation_id, relevance, naturalness, conciseness))
+    cursor.execute(sql_evaluation, (user_id, conversation_id, relevance, naturalness, conciseness, completeness))
 
     conn.commit()
     conn.close()
@@ -28,6 +27,7 @@ def insert_evaluation_result(user_id, conversation_id, relevance, naturalness, c
 def index(page_num=1):
     conn = sqlite3.connect('ikat-database.db')
     cursor = conn.cursor()
+    print(session)
 
     if 'user_id' not in session:
         return redirect(url_for('login'))
@@ -102,6 +102,7 @@ def index(page_num=1):
 
         data.append({
             'question_id': row[0],
+            'batch_id': session['batch_id'],
             'conversation_context': conversation_context,
             'turn_id': row[2],
             'run_id': row[3],
@@ -138,6 +139,7 @@ def evaluate():
         relevance = data['relevance']
         naturalness = data['naturalness']
         conciseness = data['conciseness']
+        completeness = data['completeness']
     except KeyError:
         return jsonify({"message": "Error: value does not exist"}), 400
 
@@ -146,15 +148,17 @@ def evaluate():
         relevance = int(relevance)
         naturalness = int(naturalness)
         conciseness = int(conciseness)
+        completeness = int(completeness)
     except ValueError:
         return jsonify({"message": "Error: Invalid integer values"}), 400
 
     # Check if relevance, naturalness, and conciseness are within the valid range
-    if not (0 <= relevance <= 3) or not (0 <= naturalness <= 3) or not (0 <= conciseness <= 3):
+    if not (0 <= relevance <= 3) or not (0 <= naturalness <= 3) or not (0 <= conciseness <= 3) \
+            or not (0 <= completeness <= 3):
         return jsonify({"message": "Error: Values out of range (0-3)"}), 400
 
     # Insert the evaluation result into the database
-    insert_evaluation_result(user_id, item_id, relevance, naturalness, conciseness)
+    insert_evaluation_result(user_id, item_id, relevance, naturalness, conciseness, completeness)
     return jsonify({"message": "Success"})
 
 
@@ -181,6 +185,7 @@ def intro():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    print(f'session in login:{session}')
     if request.method == 'POST':
         user_id = request.form.get('user_id')
         password = request.form.get('password')
@@ -212,6 +217,7 @@ def logout():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    print(f'session in signup:{session}')
     if request.method == 'POST':
         user_id = request.form.get('user_id')
         password = request.form.get('password')
@@ -260,9 +266,9 @@ def thank_you():
 
 @app.route('/', methods=['GET'])
 def main():
+    print(f'session in main: {session}')
     return redirect(url_for('login'))
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-

@@ -38,6 +38,7 @@ def create_schema(data_dir):
             relevance INTEGER,
             naturalness INTEGER,
             conciseness INTEGER,
+            completeness INTEGER,
             FOREIGN KEY(user_id) REFERENCES users(user_id),
             FOREIGN KEY(conversation_id) REFERENCES conversations(conversation_id)
         )
@@ -55,6 +56,7 @@ def create_schema(data_dir):
         CREATE TABLE IF NOT EXISTS batch_conversations (
             batch_id INTEGER,
             conversation_id TEXT,
+            UNIQUE(batch_id, conversation_id), 
             FOREIGN KEY (batch_id) REFERENCES batches (batch_id),
             FOREIGN KEY (conversation_id) REFERENCES conversations (conversation_id)
         )
@@ -72,6 +74,8 @@ def create_schema(data_dir):
 
     # Insert conversations and batches into tables
     batch_files = [f for f in os.listdir(data_dir) if f.startswith('batch_') and f.endswith('.json')]
+    # Process batches in numerical order
+    batch_files = sorted(batch_files, key=lambda x: int(x.split('_')[1].split('.')[0]))
     for batch_file in batch_files:
         with open(os.path.join(data_dir, batch_file), 'r') as f:
             batch_data = json.load(f)
@@ -85,7 +89,7 @@ def create_schema(data_dir):
                     ''', (item['conversation_id'], item['conversation_context'], item['turn_id'], item['run_id'], item['response']))
                 # Map the conversation to the batch
                 cursor.execute('''
-                    INSERT INTO batch_conversations (batch_id, conversation_id) VALUES (?, ?)
+                    INSERT OR IGNORE INTO batch_conversations (batch_id, conversation_id) VALUES (?, ?)
                 ''', (batch_id, item['conversation_id']))
 
     # Commit changes and close the connection

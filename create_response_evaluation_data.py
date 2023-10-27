@@ -27,7 +27,6 @@ def create_data(run_directory, turn_ids, topics):
 
     # Extract data for each turn_id
     for turn_id in tqdm(turn_ids, total=len(turn_ids)):
-        # turn_id = '14-2_6'
         topic_subtree, turn = turn_id.split('_')
         topic_id, subtree_id = topic_subtree.split('-')
 
@@ -65,8 +64,7 @@ def create_data(run_directory, turn_ids, topics):
                                                 if any(passage.get('used', False) for passage in
                                                        resp['passage_provenance']):
                                                     response = resp['text']
-
-                                                    conversation_id = turn_id.rsplit('_', 1)[0]
+                                                    conversation_id = turn_id + ' ' + run['run_name'] + ' ' + response
                                                     hashed_conversation_id = hashlib.md5(
                                                         conversation_id.encode()).hexdigest()
 
@@ -79,21 +77,51 @@ def create_data(run_directory, turn_ids, topics):
                                                         'response': f'SYSTEM: {response}'
                                                     })
                                                     break
-
                 break
 
+    # Post-processing to remove duplicates based on conversation_id
+    seen = set()
+    unique_results = [item for item in results if
+                      not (item['conversation_id'] in seen or seen.add(item['conversation_id']))]
+
     # Shuffle and batch the results
-    random.shuffle(results)
-    batches = [results[i:i + 20] for i in range(0, len(results), 20)]
-    return batches
+    random.shuffle(unique_results)
+
+    # Create batches ensuring that the same conversation_id doesn't occur twice in the same batch
+    batches = []
+    batch = []
+    conversation_ids_in_current_batch = set()
+    batch_to_turns_dict = {}
+    batch_id = 1
+
+    for item in unique_results:
+        if item['conversation_id'] not in conversation_ids_in_current_batch:
+            batch.append(item)
+            conversation_ids_in_current_batch.add(item['conversation_id'])
+
+            if len(batch) == 20:
+                batches.append(batch)
+                batch_to_turns_dict[batch_id] = conversation_ids_in_current_batch
+                batch_id += 1
+                batch = []
+                conversation_ids_in_current_batch.clear()
+
+    # If there are remaining items in the batch, add them to batches
+    if batch:
+        batches.append(batch)
+
+    return batches, batch_to_turns_dict
 
 
-def write_to_file(data, save):
+def write_to_file(batches, batch_to_turn_dict, save):
     # Save the batches to JSON files
-    for idx, batch in enumerate(data):
-        save_path = os.path.join(save, f'batch_{idx + 1}.json')
-        with open(save_path, 'w') as f:
+    save_path_batch_to_turn = os.path.join(save, f'batch_turns.json')
+    for idx, batch in enumerate(batches):
+        save_path_batches = os.path.join(save, f'batch_{idx + 1}.json')
+        with open(save_path_batches, 'w') as f:
             json.dump(batch, f, indent=4)
+    with open(save_path_batch_to_turn, 'w') as f:
+        json.dump(batch_to_turn_dict, f, indent=4)
 
 
 def main():
@@ -113,11 +141,11 @@ def main():
     print('[Done].')
 
     print('Creating data...')
-    data = create_data(run_directory=args.runs, topics=topics, turn_ids=turns)
+    batches, batch_to_turn_dict = create_data(run_directory=args.runs, topics=topics, turn_ids=turns)
     print('[Done].')
 
     print('Saving to file...')
-    write_to_file(data=data, save=args.save)
+    write_to_file(batches=batches, batch_to_turn_dict=batch_to_turn_dict, save=args.save)
     print('[Done].')
     print('Data saved to ==> {}'.format(args.save))
 

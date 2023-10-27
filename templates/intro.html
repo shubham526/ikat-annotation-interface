@@ -12,6 +12,14 @@
             padding-right: 0 !important;
             margin-right: 0;
         }
+        .important-note {
+            border: 2px solid red;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #ffe6e6; /* light red background */
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
@@ -22,15 +30,33 @@
         <div class="col-md-7">
             <h2 class="opaque-text">Welcome to the Response Evaluation system for TREC iKAT 2023</h2>
             <p>
-                Thank you for participating in this evaluation. You will be presented with a series of conversations.
-                The USER asks a series of questions to the SYSTEM about a topic, while the SYSTEM responds accordingly.
+                Thank you for participating in this evaluation. You'll be shown a series of conversations where the
+                USER poses questions about a specific topic, and the SYSTEM provides corresponding answers.
+            </p>
+            <p>
+                You will not be shown full conversations. Instead, you will be presented with the initial user
+                utterance followed by the conversation context, which includes the last three user-system dialogues leading up to the response you'll
+                evaluate. An ellipsis between the first utterance and the context indicates there are additional
+                dialogues not displayed. Use the initial utterance to understand the user's primary information need
+                and combine this understanding with the given context to make your judgments. The response you're
+                evaluating will be highlighted within a grey box for easy reference.
             </p>
             <p><strong>Task:</strong> You must evaluate the last SYSTEM response of
-                each dialogue in terms of its <b>relevance</b>, <b>naturalness</b>, and <b>conciseness</b> in relation to the
+                each dialogue in terms of its <b>relevance</b>, <b>naturalness</b>, <b>conciseness</b>, and <b>completeness</b> in relation to the
                 entire conversation. Your judgements should be on a scale of 0 (lowest) to 3 (highest).
             </p>
             <p>
                 Please read each conversation carefully and provide your evaluation using the provided dropdown menus.
+            </p>
+            <p>
+                <b>Note.</b> You'll review a total of 40 conversations. After completing them, you'll have the choice
+                to evaluate more. If you decide not to continue, you can easily log out of the system.
+            </p>
+            <p>
+                <div class="important-note">
+                    <strong>Important:</strong> Please <b>DO NOT</b> log out before finishing the task. Logging out
+            prematurely will result in the loss of your progress, and you'll need to start over.
+                </div>
             </p>
             <a href="/index/1" class="btn btn-primary">Start Evaluation</a>
         </div>
@@ -70,6 +96,13 @@
                             (i.e. does not adequately address the user’s utterance/query or properly follow on from the conversation).
                             <li><strong>3 Yes:</strong> The response is brief but comprehensive
                             (the response was concise and to the point without too much/little other information).
+                        </ul>
+                        <li><strong>Completeness:</strong> Does the SYSTEM response provide a thorough and comprehensive answer to the question posed?</li>
+                        <ul>
+                            <li><strong>0 No:</strong> The response does not address the question at all or provides information that is entirely unrelated.</li>
+                            <li><strong>1 Somewhat:</strong> The response touches on the topic but misses significant details or only addresses one aspect of a multi-part question.</li>
+                            <li><strong>2 Yes (but not completely):</strong> The response covers most aspects of the question but may miss minor details or nuances.</li>
+                            <li><strong>3 Yes:</strong> The response comprehensively addresses the question, providing a detailed and thorough answer that leaves no aspect untouched.</li>
                         </ul>
                     </ul>
                 </div>

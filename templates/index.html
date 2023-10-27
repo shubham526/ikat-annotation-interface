@@ -59,16 +59,16 @@
         }
 
         @keyframes ellipsis {
-    0% { content: "."; }
-    33% { content: ".."; }
-    66% { content: "..."; }
-    100% { content: "."; }
-}
+            0% { content: "."; }
+            33% { content: ".."; }
+            66% { content: "..."; }
+            100% { content: "."; }
+        }
 
-.animated-ellipsis:after {
-    content: "...";
-    animation: ellipsis 1.5s infinite;
-}
+        .animated-ellipsis:after {
+            content: "...";
+            animation: ellipsis 1.5s infinite;
+        }
 
     </style>
 </head>
@@ -86,22 +86,17 @@
                 <div class="conversation-card">
                     <h3>Conversation</h3>
                     {% set first_utterance = item.conversation_context.split("\n", 1)[0].replace("USER:", "").strip() %}
+<!--                    <p>-->
+<!--                        <b>batch_id:</b> {{ item.batch_id }}-->
+<!--                        <b>conversation_id:</b> {{ item.question_id }}-->
+<!--                        <b>turn_id:</b> {{ item.turn_id }} <br>-->
+<!--                        <b> run_id:</b> {{ item.run_id }}-->
+<!--                    </p>-->
                     <p>
                         <strong>USER:</strong>{{ first_utterance }}
                         <span class="animated-ellipsis"></span>
                     </p>
                     <p>{{ item.conversation_context.replace("USER: " + first_utterance, "").replace("USER:", "<br><strong>USER:</strong>").replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>
-<!--                    {% set first_utterance = item.conversation_context.split("\n", 1)[0] %}-->
-<!--    <p><strong>USER:</strong>{{ first_utterance }} <br> <span class="animated-ellipsis"></span></p>-->
-<!--    <p>{{ item.conversation_context.replace(first_utterance, "").replace("USER:", "<br><strong>USER:</strong>").replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>-->
-<!--                    {% set first_utterance = item.conversation_context.split("\n", 1)[0] %}-->
-<!--                    <p>-->
-<!--                        <strong>USER:</strong>-->
-<!--                        {{ first_utterance }}-->
-<!--                        <br>-->
-<!--                        ...-->
-<!--                    </p>-->
-<!--                    <p>{{ item.conversation_context.replace(first_utterance, "").replace("USER:", "<br><strong>USER:</strong>").replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>-->
 
                     <div class="response-box">
                         <p>{{ item.response.replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>
@@ -131,6 +126,16 @@
                     <div class="form-group">
                         <label>Conciseness</label>
                         <select class="form-control conciseness">
+                            <option value="" selected disabled hidden></option>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Completeness</label>
+                        <select class="form-control completeness">
                             <option value="" selected disabled hidden></option>
                             <option value="0">0</option>
                             <option value="1">1</option>
@@ -192,6 +197,13 @@
                             <li><strong>3 Yes:</strong> The response is brief but comprehensive</li>
                             (the response was concise and to the point without too much/little other information).</li>
                         </ul>
+                         <li><strong>Completeness:</strong> Does the SYSTEM response provide a thorough and comprehensive answer to the question posed?</li>
+                        <ul>
+                            <li><strong>0 No:</strong> The response does not address the question at all or provides information that is entirely unrelated.</li>
+                            <li><strong>1 Somewhat:</strong> The response touches on the topic but misses significant details or only addresses one aspect of a multi-part question.</li>
+                            <li><strong>2 Yes (but not completely):</strong> The response covers most aspects of the question but may miss minor details or nuances.</li>
+                            <li><strong>3 Yes:</strong> The response comprehensively addresses the question, providing a detailed and thorough answer that leaves no aspect untouched.</li>
+                        </ul>
                     </ul>
                     </div>
                 </div>
@@ -239,6 +251,7 @@
         let relevance = card.find('.relevance').val();
         let naturalness = card.find('.naturalness').val();
         let conciseness = card.find('.conciseness').val();
+        let completeness = card.find('.completeness').val();
 
         // Send data to server for processing
         $.ajax({
@@ -249,7 +262,8 @@
                 'id': question_id,
                 'relevance': relevance,
                 'naturalness': naturalness,
-                'conciseness': conciseness
+                'conciseness': conciseness,
+                'completeness': completeness
             }),
 
             dataType: 'json',
@@ -311,3 +325,4 @@
 
 </body>
 </html>
+
