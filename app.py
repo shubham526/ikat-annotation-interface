@@ -8,16 +8,20 @@ app.secret_key = os.environ.get('FLASK_SECRET_KEY')
 ITEMS_PER_PAGE = 1
 
 
-def insert_evaluation_result(user_id, conversation_id, relevance, naturalness, conciseness, completeness):
+def insert_evaluation_result(user_id, conversation_id, relevance, naturalness, conciseness, completeness,
+                             relevance_feedback, naturalness_feedback, conciseness_feedback, completeness_feedback):
     conn = sqlite3.connect('ikat-database.db')
     cursor = conn.cursor()
 
     # Insert a new evaluation into the evaluations table
     sql_evaluation = '''
-        INSERT INTO evaluations (user_id, conversation_id, relevance, naturalness, conciseness, completeness)
-        VALUES (?, ?, ?, ?, ?, ?);
+        INSERT INTO evaluations (user_id, conversation_id, relevance, naturalness, conciseness, completeness,
+        relevance_feedback, naturalness_feedback, conciseness_feedback, completeness_feedback)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
     '''
-    cursor.execute(sql_evaluation, (user_id, conversation_id, relevance, naturalness, conciseness, completeness))
+    cursor.execute(sql_evaluation, (user_id, conversation_id, relevance, naturalness, conciseness, completeness,
+                                    relevance_feedback, naturalness_feedback, conciseness_feedback,
+                                    completeness_feedback))
 
     conn.commit()
     conn.close()
@@ -140,6 +144,10 @@ def evaluate():
         naturalness = data['naturalness']
         conciseness = data['conciseness']
         completeness = data['completeness']
+        relevance_feedback = data['relevance_feedback']
+        naturalness_feedback = data['naturalness_feedback']
+        conciseness_feedback = data['conciseness_feedback']
+        completeness_feedback = data['completeness_feedback']
     except KeyError:
         return jsonify({"message": "Error: value does not exist"}), 400
 
@@ -152,13 +160,17 @@ def evaluate():
     except ValueError:
         return jsonify({"message": "Error: Invalid integer values"}), 400
 
-    # Check if relevance, naturalness, and conciseness are within the valid range
-    if not (0 <= relevance <= 3) or not (0 <= naturalness <= 3) or not (0 <= conciseness <= 3) \
-            or not (0 <= completeness <= 3):
-        return jsonify({"message": "Error: Values out of range (0-3)"}), 400
+    # Check if relevance, naturalness, conciseness, and completeness are within the valid range
+    valid_range = (-1, 3)  # Updated to include -1
+    if not valid_range[0] <= relevance <= valid_range[1] or \
+            not valid_range[0] <= naturalness <= valid_range[1] or \
+            not valid_range[0] <= conciseness <= valid_range[1] or \
+            not valid_range[0] <= completeness <= valid_range[1]:
+        return jsonify({"message": "Error: Values out of range (-1 to 3)"}), 400  # Updated range in the message
 
     # Insert the evaluation result into the database
-    insert_evaluation_result(user_id, item_id, relevance, naturalness, conciseness, completeness)
+    insert_evaluation_result(user_id, item_id, relevance, naturalness, conciseness, completeness,
+                             relevance_feedback, naturalness_feedback, conciseness_feedback, completeness_feedback)
     return jsonify({"message": "Success"})
 
 
@@ -272,3 +284,4 @@ def main():
 
 if __name__ == '__main__':
     app.run(debug=True)
+

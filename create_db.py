@@ -39,6 +39,10 @@ def create_schema(data_dir):
             naturalness INTEGER,
             conciseness INTEGER,
             completeness INTEGER,
+            relevance_feedback TEXT, 
+            naturalness_feedback TEXT, 
+            conciseness_feedback TEXT, 
+            completeness_feedback TEXT, 
             FOREIGN KEY(user_id) REFERENCES users(user_id),
             FOREIGN KEY(conversation_id) REFERENCES conversations(conversation_id)
         )
@@ -106,3 +110,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

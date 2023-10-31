@@ -28,6 +28,7 @@
             padding: 10px;
             background-color: #e6e6e6;
             margin-top: 10px;
+            margin-bottom: 10px;
         }
 
 
@@ -39,7 +40,7 @@
             margin-bottom: 20px;
             border: 1px solid #ddd;
             border-radius: 5px;
-            padding: 10px;
+            padding: 12px;
             background-color: #f7f7f9;
         }
         .conversation-card p {
@@ -69,6 +70,27 @@
             content: "...";
             animation: ellipsis 1.5s infinite;
         }
+
+        textarea.form-control {
+            resize: vertical; /* Allow only vertical resizing */
+            margin-top: 5px; /* Spacing between label and textarea */
+        }
+        .form-control {
+            margin-bottom: 15px;  /* Adjust the value as per your preference */
+        }
+
+        /* New Styles for Evaluation Cards */
+        .card.my-2 {
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-bottom: 20px; /* Spacing between each card */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add a light shadow for depth */
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
 
     </style>
 </head>
@@ -103,45 +125,71 @@
                     </div>
 
                     <h3>Evaluate</h3>
-                    <div class="form-group">
-                        <label>Relevance</label>
-                        <select class="form-control relevance">
-                            <option value="" selected disabled hidden></option>
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
+                    <!-- Relevance Card -->
+                    <div class="card my-2">
+                        <div class="card-body">
+                            <label><b>Relevance</b></label>
+                            <select class="form-control relevance">
+                                <option value="" selected disabled hidden></option>
+                                <option value="-1">-1</option>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <label for="relevance-reason"><b>Rationale</b></label>
+                            <textarea class="form-control" id="relevance-reason" name="relevance-reason" rows="2"></textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Naturalness</label>
-                        <select class="form-control naturalness">
-                            <option value="" selected disabled hidden></option>
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
+                          <!-- Naturalness Card -->
+                    <div class="card my-2">
+                        <div class="card-body">
+                            <label><b>Naturalness</b></label>
+                            <select class="form-control naturalness">
+                                <option value="" selected disabled hidden></option>
+                                <option value="-1">-1</option>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <label for="naturalness-reason"><b>Rationale</b></label>
+                            <textarea class="form-control" id="naturalness-reason" name="naturalness-reason" rows="2"></textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Conciseness</label>
-                        <select class="form-control conciseness">
-                            <option value="" selected disabled hidden></option>
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
+
+                    <!-- Conciseness Card -->
+                    <div class="card my-2">
+                        <div class="card-body">
+                            <label><b>Conciseness</b></label>
+                            <select class="form-control conciseness">
+                                <option value="" selected disabled hidden></option>
+                                <option value="-1">-1</option>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <label for="conciseness-reason"><b>Rationale</b></label>
+                            <textarea class="form-control" id="conciseness-reason" name="conciseness-reason" rows="2"></textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Completeness</label>
-                        <select class="form-control completeness">
-                            <option value="" selected disabled hidden></option>
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                        </select>
+
+                    <!-- Completeness Card -->
+                    <div class="card my-2">
+                        <div class="card-body">
+                            <label><b>Completeness</b></label>
+                            <select class="form-control completeness">
+                                <option value="" selected disabled hidden></option>
+                                <option value="-1">-1</option>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <label for="completeness-reason"><b>Rationale</b></label>
+                            <textarea class="form-control" id="completeness-reason" name="completeness-reason" rows="2"></textarea>
+                        </div>
                     </div>
                     <button class="submit-btn" data-id="{{ item.question_id }}" data-submitted="false" type="button">Submit</button>
                     <span class="checkmark" data-id="{{ item.question_id }}" style="display: none;">✔</span>
@@ -160,6 +208,27 @@
 
         </div>
 
+        <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Submission Error</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Please select a value for all the dropdowns before submitting.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
         <!-- Rubric Side Pane -->
         <div class="col-md-5">
             <button id="toggleRubric" class="btn btn-secondary mb-3">Show/Hide Rubric</button>
@@ -170,6 +239,8 @@
                         <ul>
                         <li><strong>Relevance:</strong> Does the SYSTEM response follow on from previous utterances?</li>
                         <ul>
+                            <li><strong>-1 Unable to Judge:</strong> Cannot determine the relevance of the response
+                                due to lack of context or other reasons.</li>
                             <li><strong>0 Not Relevant:</strong> Does’t follow on from the previous utterances, seems to be completely
                                 random, to the current conversation, seems to be a completely different conversation.</li>
                             <li><strong>1 Partially Relevant:</strong> The response is partially off-topic; may
@@ -179,6 +250,8 @@
                         </ul>
                         <li><strong>Naturalness:</strong> Does the system's response sound natural as if a human was speaking?</li>
                         <ul>
+                             <li><strong>-1 Unable to Judge:</strong> Cannot determine the naturalness of the response
+                                due to lack of context or other reasons.</li>
                             <li><strong>0 No:</strong> The response does not sound like something a human would say given the conversation.</li>
                             <li><strong>1 Somewhat:</strong> The response is a bit human-like. The response is somewhat
                             understandable but may not be entirely fluent and natural.</li>
@@ -188,6 +261,8 @@
                         </ul>
                         <li><strong>Conciseness:</strong> Is the system's response concise, or does it have unnecessary information?</li>
                         <ul>
+                             <li><strong>-1 Unable to Judge:</strong> Cannot determine the conciseness of the response
+                                due to lack of context or other reasons.</li>
                             <li><strong>0 No:</strong> The response is too wordy or too short. The response  may also contain lots of
                                 irrelevant content or no relevant information at all.</li>
                             <li><strong>1 Somewhat:</strong> The response is a bit wordy and does not  adequately address the user’s
@@ -199,6 +274,8 @@
                         </ul>
                          <li><strong>Completeness:</strong> Does the SYSTEM response provide a thorough and comprehensive answer to the question posed?</li>
                         <ul>
+                             <li><strong>-1 Unable to Judge:</strong> Cannot determine the completeness of the response
+                                due to lack of context or other reasons.</li>
                             <li><strong>0 No:</strong> The response does not address the question at all or provides information that is entirely unrelated.</li>
                             <li><strong>1 Somewhat:</strong> The response touches on the topic but misses significant details or only addresses one aspect of a multi-part question.</li>
                             <li><strong>2 Yes (but not completely):</strong> The response covers most aspects of the question but may miss minor details or nuances.</li>
@@ -252,6 +329,16 @@
         let naturalness = card.find('.naturalness').val();
         let conciseness = card.find('.conciseness').val();
         let completeness = card.find('.completeness').val();
+        let relevance_feedback = card.find('#relevance-reason').val();
+        let naturalness_feedback = card.find('#naturalness-reason').val();
+        let conciseness_feedback = card.find('#conciseness-reason').val();
+        let completeness_feedback = card.find('#completeness-reason').val();
+
+        if (!relevance || !naturalness || !conciseness || !completeness) {
+            $('#errorModal').modal('show'); // Show the modal
+            return;
+        }
+
 
         // Send data to server for processing
         $.ajax({
@@ -263,8 +350,13 @@
                 'relevance': relevance,
                 'naturalness': naturalness,
                 'conciseness': conciseness,
-                'completeness': completeness
+                'completeness': completeness,
+                'relevance_feedback': relevance_feedback,
+                'naturalness_feedback': naturalness_feedback,
+                'conciseness_feedback': conciseness_feedback,
+                'completeness_feedback': completeness_feedback
             }),
+
 
             dataType: 'json',
             success: function(response) {
@@ -305,8 +397,6 @@
     } else {
         $("#nextBtn").addClass("disabled").attr("disabled", "disabled");
     }
-
-
 
     // When the document is ready
     $(document).ready(function(){
