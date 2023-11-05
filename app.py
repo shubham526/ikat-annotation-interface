@@ -124,6 +124,7 @@ def index(page_num=1):
         next_page=next_page,
         prev_page=prev_page,
         show_rubric=True,
+        show_examples=True,
         is_last_page=is_last_page
     )
 
