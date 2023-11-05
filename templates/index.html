@@ -232,6 +232,7 @@
         <!-- Rubric Side Pane -->
         <div class="col-md-5">
             <button id="toggleRubric" class="btn btn-secondary mb-3">Show/Hide Rubric</button>
+            <button id="toggleExamples" class="btn btn-secondary mb-3">Show/Hide Examples</button>
             {% if show_rubric %}
                 <div class="card" id="rubricCard">
                     <div class="card-header"><h3>Rubric</h3></div>
@@ -283,6 +284,123 @@
                         </ul>
                     </ul>
                     </div>
+
+                </div>
+            {% endif %}
+
+            {% if show_examples %}
+                <div class="card" id="examplesCard">
+                    <div class="card-header"><h3>Examples</h3></div>
+                <div class="card-body">
+
+                    <!-- Relevance Section -->
+                    <h4>Relevance:</h4>
+
+                    <p><strong>0 Not Relevant:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "Bananas are rich in potassium and make a healthy snack."<br>
+                    <em>Clarification:</em> The response doesn't address the question about the heart at all and instead discusses a completely unrelated topic about bananas.
+                    </p>
+
+                    <p><strong>1 Partially Relevant:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart is an important organ. Many people also use the word 'heart' to describe emotions and feelings."<br>
+                    <em>Clarification:</em> While the response mentions the heart, it diverges into emotional connotations of the word "heart" which isn't directly relevant to the user's query about its functions.
+                    </p>
+
+                    <p><strong>2 Relevant:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart pumps blood, but blood also carries oxygen."<br>
+                    <em>Clarification:</em> The system addresses the heart and its function to pump blood but does not provide a complete or clear answer to the user's question.
+                    </p>
+
+                    <p><strong>3 Highly Relevant:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart's main function is to pump blood throughout the body, delivering oxygen and nutrients to tissues and removing waste products."<br>
+                    <em>Clarification:</em> The response directly and comprehensively addresses the user's query, covering the main functions of the heart.
+                    </p>
+
+                    <!-- Naturalness Section -->
+                    <h4>Naturalness:</h4>
+
+                    <p><strong>0 No:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "Heart function blood pump."<br>
+                    <em>Clarification:</em> The response is fragmented and does not flow like a natural human response.
+                    </p>
+
+                    <p><strong>1 Somewhat:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart, it does the pumping of the blood. Oxygen goes to body."<br>
+                    <em>Clarification:</em> While the response provides some relevant information, it is phrased awkwardly and doesn't flow smoothly.
+                    </p>
+
+                    <p><strong>2 Yes (but not completely):</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "Heart's role: pump blood. Blood transports oxygen."<br>
+                    <em>Clarification:</em> The answer is structured and makes sense, but it lacks the fluidity and conversational tone of natural human speech.
+                    </p>
+
+                    <p><strong>3 Yes:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "Certainly! The heart primarily pumps blood throughout the body, ensuring oxygen and nutrients are delivered to various tissues."<br>
+                    <em>Clarification:</em> The response is clear, well-phrased, and sounds like something a human would naturally say in conversation.
+                    </p>
+
+                    <!-- Conciseness Section -->
+                    <h4>Conciseness:</h4>
+
+                    <p><strong>0 No:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "Well, you see, there's this organ, right? It's in the chest, sort of left-center? It's called the heart. It does stuff. Like, it beats and moves this red liquid which is blood. The blood goes places."<br>
+                    <em>Clarification:</em> The response is overly wordy and meandering, with unnecessary details that don't directly address the question.
+                    </p>
+
+                    <p><strong>1 Somewhat:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart is a vital organ in the chest. It pumps blood which has various components like red blood cells. These cells carry oxygen."<br>
+                    <em>Clarification:</em> The system provides relevant information but includes extra details that aren't strictly necessary to answer the user's query.
+                    </p>
+
+                    <p><strong>2 Yes (but not completely):</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart pumps blood and circulates oxygen."<br>
+                    <em>Clarification:</em> The response is concise, but it doesn't fully capture the comprehensive nature of the heart's main functions.
+                    </p>
+
+                    <p><strong>3 Yes:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart pumps blood throughout the body, delivering oxygen to tissues."<br>
+                    <em>Clarification:</em> The system's answer is succinct, directly addressing the user's question without superfluous details.
+                    </p>
+
+                    <!-- Completeness Section -->
+                    <h4>Completeness:</h4>
+
+                    <p><strong>0 No:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart is in the chest."<br>
+                    <em>Clarification:</em> The response does not address the user's question about the heart's functions, providing only a basic fact about its location.
+                    </p>
+
+                    <p><strong>1 Somewhat:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart pumps blood."<br>
+                    <em>Clarification:</em> The response addresses part of the user's question by mentioning the heart's role in pumping blood, but it doesn't elaborate or cover other functions.
+                    </p>
+
+                    <p><strong>2 Yes (but not completely):</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart pumps blood and ensures oxygen is delivered to tissues."<br>
+                    <em>Clarification:</em> The answer addresses the main functions of the heart but might not capture all the nuances or details.
+                    </p>
+
+                    <p><strong>3 Yes:</strong><br>
+                    User: "Can you tell me about the main functions of the heart?"<br>
+                    System: "The heart's main function is to pump blood throughout the body, delivering oxygen and nutrients to tissues and removing waste products."<br>
+                    <em>Clarification:</em> The system's response comprehensively covers the heart's main functions, directly and fully addressing the user's query.
+                    </p>
+                </div>
                 </div>
             {% endif %}
         </div>
@@ -397,6 +515,15 @@
     } else {
         $("#nextBtn").addClass("disabled").attr("disabled", "disabled");
     }
+
+    // When the document is ready
+    $(document).ready(function(){
+        // When the toggle button is clicked
+        $("#toggleExamples").click(function(){
+            // Toggle the visibility of the rubric card
+            $("#examplesCard").toggle();
+        });
+    });
 
     // When the document is ready
     $(document).ready(function(){
