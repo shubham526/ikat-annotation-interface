@@ -108,12 +108,6 @@
                 <div class="conversation-card">
                     <h3>Conversation</h3>
                     {% set first_utterance = item.conversation_context.split("\n", 1)[0].replace("USER:", "").strip() %}
-<!--                    <p>-->
-<!--                        <b>batch_id:</b> {{ item.batch_id }}-->
-<!--                        <b>conversation_id:</b> {{ item.question_id }}-->
-<!--                        <b>turn_id:</b> {{ item.turn_id }} <br>-->
-<!--                        <b> run_id:</b> {{ item.run_id }}-->
-<!--                    </p>-->
                     <p>
                         <strong>USER:</strong>{{ first_utterance }}
                         <span class="animated-ellipsis"></span>
@@ -129,7 +123,7 @@
                     <div class="card my-2">
                         <div class="card-body">
                             <label><b>Relevance</b></label>
-                            <select class="form-control relevance">
+                            <select class="form-control relevance" required>
                                 <option value="" selected disabled hidden></option>
                                 <option value="-1">-1</option>
                                 <option value="0">0</option>
@@ -138,40 +132,7 @@
                                 <option value="3">3</option>
                             </select>
                             <label for="relevance-reason"><b>Rationale</b></label>
-                            <textarea class="form-control" id="relevance-reason" name="relevance-reason" rows="2"></textarea>
-                        </div>
-                    </div>
-                          <!-- Naturalness Card -->
-                    <div class="card my-2">
-                        <div class="card-body">
-                            <label><b>Naturalness</b></label>
-                            <select class="form-control naturalness">
-                                <option value="" selected disabled hidden></option>
-                                <option value="-1">-1</option>
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                            <label for="naturalness-reason"><b>Rationale</b></label>
-                            <textarea class="form-control" id="naturalness-reason" name="naturalness-reason" rows="2"></textarea>
-                        </div>
-                    </div>
-
-                    <!-- Conciseness Card -->
-                    <div class="card my-2">
-                        <div class="card-body">
-                            <label><b>Conciseness</b></label>
-                            <select class="form-control conciseness">
-                                <option value="" selected disabled hidden></option>
-                                <option value="-1">-1</option>
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                            </select>
-                            <label for="conciseness-reason"><b>Rationale</b></label>
-                            <textarea class="form-control" id="conciseness-reason" name="conciseness-reason" rows="2"></textarea>
+                            <textarea class="form-control" id="relevance-reason" name="relevance-reason" rows="2" required></textarea>
                         </div>
                     </div>
 
@@ -179,7 +140,7 @@
                     <div class="card my-2">
                         <div class="card-body">
                             <label><b>Completeness</b></label>
-                            <select class="form-control completeness">
+                            <select class="form-control completeness" required>
                                 <option value="" selected disabled hidden></option>
                                 <option value="-1">-1</option>
                                 <option value="0">0</option>
@@ -188,7 +149,7 @@
                                 <option value="3">3</option>
                             </select>
                             <label for="completeness-reason"><b>Rationale</b></label>
-                            <textarea class="form-control" id="completeness-reason" name="completeness-reason" rows="2"></textarea>
+                            <textarea class="form-control" id="completeness-reason" name="completeness-reason" rows="2" required></textarea>
                         </div>
                     </div>
                     <button class="submit-btn" data-id="{{ item.question_id }}" data-submitted="false" type="button">Submit</button>
@@ -249,30 +210,6 @@
                             <li><strong>2 Relevant:</strong> Follows on, but it is not entirely clear why the response is being presented.</li>
                             <li><strong>3 Highly Relevant:</strong> Directly follows on, and it is clear why the response is being presented.</li>
                         </ul>
-                        <li><strong>Naturalness:</strong> Does the system's response sound natural as if a human was speaking?</li>
-                        <ul>
-                             <li><strong>-1 Unable to Judge:</strong> Cannot determine the naturalness of the response
-                                due to lack of context or other reasons.</li>
-                            <li><strong>0 No:</strong> The response does not sound like something a human would say given the conversation.</li>
-                            <li><strong>1 Somewhat:</strong> The response is a bit human-like. The response is somewhat
-                            understandable but may not be entirely fluent and natural.</li>
-                            <li><strong>2 Yes (but not completely) :</strong> The response is almost human-like. The response is
-                            well-formed but is not natural.</li>
-                            <li><strong>3 Yes:</strong> The response is very human-like and fluent.</li>
-                        </ul>
-                        <li><strong>Conciseness:</strong> Is the system's response concise, or does it have unnecessary information?</li>
-                        <ul>
-                             <li><strong>-1 Unable to Judge:</strong> Cannot determine the conciseness of the response
-                                due to lack of context or other reasons.</li>
-                            <li><strong>0 No:</strong> The response is too wordy or too short. The response  may also contain lots of
-                                irrelevant content or no relevant information at all.</li>
-                            <li><strong>1 Somewhat:</strong> The response is a bit wordy and does not  adequately address the user’s
-                            utterance (i.e. the response is longer than needed).</li>
-                            <li><strong>2 Yes (but not completely) :</strong> The response is brief but not comprehensive
-                            (i.e. does not adequately address the user’s utterance/query or properly follow on from the conversation).
-                            <li><strong>3 Yes:</strong> The response is brief but comprehensive</li>
-                            (the response was concise and to the point without too much/little other information).</li>
-                        </ul>
                          <li><strong>Completeness:</strong> Does the SYSTEM response provide a thorough and comprehensive answer to the question posed?</li>
                         <ul>
                              <li><strong>-1 Unable to Judge:</strong> Cannot determine the completeness of the response
@@ -318,60 +255,6 @@
                         User: "Can you tell me about the main functions of the heart?"<br>
                         System: "The heart's main function is to pump blood throughout the body, delivering oxygen and nutrients to tissues and removing waste products."<br>
                         <em>Clarification:</em> The response directly and comprehensively addresses the user's query, covering the main functions of the heart.
-                        </p>
-
-                        <!-- Naturalness Section -->
-                        <h4>Naturalness:</h4>
-
-                        <p><strong>0 No:</strong><br>
-                        User: "Can you tell me about the main functions of the heart?"<br>
-                        System: "Heart function blood pump."<br>
-                        <em>Clarification:</em> The response is fragmented and does not flow like a natural human response.
-                        </p>
-
-                        <p><strong>1 Somewhat:</strong><br>
-                        User: "Can you tell me about the main functions of the heart?"<br>
-                        System: "The heart, it does the pumping of the blood. Oxygen goes to body."<br>
-                        <em>Clarification:</em> While the response provides some relevant information, it is phrased awkwardly and doesn't flow smoothly.
-                        </p>
-
-                        <p><strong>2 Yes (but not completely):</strong><br>
-                        User: "Can you tell me about the main functions of the heart?"<br>
-                        System: "Heart's role: pump blood. Blood transports oxygen."<br>
-                        <em>Clarification:</em> The answer is structured and makes sense, but it lacks the fluidity and conversational tone of natural human speech.
-                        </p>
-
-                        <p><strong>3 Yes:</strong><br>
-                        User: "Can you tell me about the main functions of the heart?"<br>
-                        System: "Certainly! The heart primarily pumps blood throughout the body, ensuring oxygen and nutrients are delivered to various tissues."<br>
-                        <em>Clarification:</em> The response is clear, well-phrased, and sounds like something a human would naturally say in conversation.
-                        </p>
-
-                        <!-- Conciseness Section -->
-                        <h4>Conciseness:</h4>
-
-                        <p><strong>0 No:</strong><br>
-                        User: "Can you tell me about the main functions of the heart?"<br>
-                        System: "Well, you see, there's this organ, right? It's in the chest, sort of left-center? It's called the heart. It does stuff. Like, it beats and moves this red liquid which is blood. The blood goes places."<br>
-                        <em>Clarification:</em> The response is overly wordy and meandering, with unnecessary details that don't directly address the question.
-                        </p>
-
-                        <p><strong>1 Somewhat:</strong><br>
-                        User: "Can you tell me about the main functions of the heart?"<br>
-                        System: "The heart is a vital organ in the chest. It pumps blood which has various components like red blood cells. These cells carry oxygen."<br>
-                        <em>Clarification:</em> The system provides relevant information but includes extra details that aren't strictly necessary to answer the user's query.
-                        </p>
-
-                        <p><strong>2 Yes (but not completely):</strong><br>
-                        User: "Can you tell me about the main functions of the heart?"<br>
-                        System: "The heart pumps blood and circulates oxygen."<br>
-                        <em>Clarification:</em> The response is concise, but it doesn't fully capture the comprehensive nature of the heart's main functions.
-                        </p>
-
-                        <p><strong>3 Yes:</strong><br>
-                        User: "Can you tell me about the main functions of the heart?"<br>
-                        System: "The heart pumps blood throughout the body, delivering oxygen to tissues."<br>
-                        <em>Clarification:</em> The system's answer is succinct, directly addressing the user's question without superfluous details.
                         </p>
 
                         <!-- Completeness Section -->
@@ -437,26 +320,34 @@
         }
     }
 
-
-
+    // Check if all required fields within a card are filled out
+    function checkRequiredFields(card) {
+        let isValid = true;
+        card.find('textarea[required], select[required]').each(function() {
+            if (!$(this).val()) {
+                isValid = false;
+                $(this).css('border', '1px solid red'); // Highlight the empty textarea/select
+            } else {
+                $(this).css('border', ''); // Reset the highlight if filled
+            }
+        });
+        return isValid;
+    }
 
     $(".submit-btn").click(function() {
         let card = $(this).closest('.conversation-card');
         let question_id = $(this).data('id');
         let relevance = card.find('.relevance').val();
-        let naturalness = card.find('.naturalness').val();
-        let conciseness = card.find('.conciseness').val();
         let completeness = card.find('.completeness').val();
         let relevance_feedback = card.find('#relevance-reason').val();
-        let naturalness_feedback = card.find('#naturalness-reason').val();
-        let conciseness_feedback = card.find('#conciseness-reason').val();
         let completeness_feedback = card.find('#completeness-reason').val();
 
-        if (!relevance || !naturalness || !conciseness || !completeness) {
+        // Check if all required fields are filled out
+        if (!checkRequiredFields(card)) {
+            $('#errorModal .modal-body').text('Please fill out all required fields before submitting.'); // Update the modal text
             $('#errorModal').modal('show'); // Show the modal
             return;
         }
-
 
         // Send data to server for processing
         $.ajax({
@@ -466,28 +357,19 @@
             data: JSON.stringify({
                 'id': question_id,
                 'relevance': relevance,
-                'naturalness': naturalness,
-                'conciseness': conciseness,
                 'completeness': completeness,
                 'relevance_feedback': relevance_feedback,
-                'naturalness_feedback': naturalness_feedback,
-                'conciseness_feedback': conciseness_feedback,
                 'completeness_feedback': completeness_feedback
             }),
-
-
             dataType: 'json',
             success: function(response) {
                 if(response.message === "Success") {
                     // Disable the button and change its text
                     $("button[data-id='" + question_id + "']").prop("disabled", true).text("Submitted");
-
                     // Show the checkmark
                     $(".checkmark[data-id='" + question_id + "']").show();
-
                     // Update the submission status for the button
                     $("button[data-id='" + question_id + "']").attr("data-submitted", "true");
-
                     // Update the "Next" button status
                     updateButtonStatus("#nextBtn");
                     updateButtonStatus("#thankYouBtn");
@@ -496,17 +378,6 @@
                 }
             }
         });
-
-        // Initial check in case the user reloads the page after submitting some questions
-        updateButtonStatus("#thankYouBtn");
-
-        // After a question is submitted, check if all questions are submitted
-       if (checkAllSubmitted()) {
-            $("#nextBtn").removeClass("disabled").removeAttr("disabled");
-        } else {
-            $("#nextBtn").addClass("disabled").attr("disabled", "disabled");
-        }
-
     });
 
     // Initial check in case the user reloads the page after submitting some questions
@@ -517,25 +388,26 @@
     }
 
     $(document).ready(function(){
-    // When the toggle button for rubric is clicked
-    $("#toggleRubric").click(function(){
-        // Toggle the visibility of the rubric card
-        $("#rubricCard").toggle();
+        // When the toggle button for rubric is clicked
+        $("#toggleRubric").click(function(){
+            // Toggle the visibility of the rubric card
+            $("#rubricCard").toggle();
+        });
+
+        // When the toggle button for examples is clicked
+        $("#toggleExamples").click(function(){
+            // Toggle the visibility of the examples card
+            $("#examplesCard").toggle();
+        });
+
+        // Re-check in case the user reloads the page after submitting some questions
+        updateButtonStatus("#thankYouBtn");
     });
-
-    // When the toggle button for examples is clicked
-    $("#toggleExamples").click(function(){
-        // Toggle the visibility of the examples card
-        $("#examplesCard").toggle();
-    });
-});
-
-
 
 </script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
 </html>
-

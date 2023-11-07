@@ -4,23 +4,23 @@ import hashlib
 import os
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+# app.secret_key = os.environ.get('FLASK_SECRET_KEY')
+app.secret_key = '5538c01ccd1b985692c3669c6fe5f2b2'
 ITEMS_PER_PAGE = 1
 
 
-def insert_evaluation_result(user_id, conversation_id, relevance, naturalness, conciseness, completeness,
-                             relevance_feedback, naturalness_feedback, conciseness_feedback, completeness_feedback):
+def insert_evaluation_result(user_id, conversation_id, relevance, completeness,
+                             relevance_feedback, completeness_feedback):
     conn = sqlite3.connect('ikat-database.db')
     cursor = conn.cursor()
 
     # Insert a new evaluation into the evaluations table
     sql_evaluation = '''
-        INSERT INTO evaluations (user_id, conversation_id, relevance, naturalness, conciseness, completeness,
-        relevance_feedback, naturalness_feedback, conciseness_feedback, completeness_feedback)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO evaluations (user_id, conversation_id, relevance, completeness, relevance_feedback, completeness_feedback)
+        VALUES (?, ?, ?, ?, ?, ?);
     '''
-    cursor.execute(sql_evaluation, (user_id, conversation_id, relevance, naturalness, conciseness, completeness,
-                                    relevance_feedback, naturalness_feedback, conciseness_feedback,
+    cursor.execute(sql_evaluation, (user_id, conversation_id, relevance, completeness,
+                                    relevance_feedback,
                                     completeness_feedback))
 
     conn.commit()
@@ -142,12 +142,8 @@ def evaluate():
 
     try:
         relevance = data['relevance']
-        naturalness = data['naturalness']
-        conciseness = data['conciseness']
         completeness = data['completeness']
         relevance_feedback = data['relevance_feedback']
-        naturalness_feedback = data['naturalness_feedback']
-        conciseness_feedback = data['conciseness_feedback']
         completeness_feedback = data['completeness_feedback']
     except KeyError:
         return jsonify({"message": "Error: value does not exist"}), 400
@@ -155,23 +151,18 @@ def evaluate():
     # Attempt to convert relevance, naturalness, and conciseness to integers
     try:
         relevance = int(relevance)
-        naturalness = int(naturalness)
-        conciseness = int(conciseness)
         completeness = int(completeness)
     except ValueError:
         return jsonify({"message": "Error: Invalid integer values"}), 400
 
     # Check if relevance, naturalness, conciseness, and completeness are within the valid range
     valid_range = (-1, 3)  # Updated to include -1
-    if not valid_range[0] <= relevance <= valid_range[1] or \
-            not valid_range[0] <= naturalness <= valid_range[1] or \
-            not valid_range[0] <= conciseness <= valid_range[1] or \
-            not valid_range[0] <= completeness <= valid_range[1]:
+    if not valid_range[0] <= relevance <= valid_range[1] or not valid_range[0] <= completeness <= valid_range[1]:
         return jsonify({"message": "Error: Values out of range (-1 to 3)"}), 400  # Updated range in the message
 
     # Insert the evaluation result into the database
-    insert_evaluation_result(user_id, item_id, relevance, naturalness, conciseness, completeness,
-                             relevance_feedback, naturalness_feedback, conciseness_feedback, completeness_feedback)
+    insert_evaluation_result(user_id, item_id, relevance, completeness,
+                             relevance_feedback, completeness_feedback)
     return jsonify({"message": "Success"})
 
 
@@ -285,4 +276,3 @@ def main():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
