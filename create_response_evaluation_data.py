@@ -64,19 +64,21 @@ def create_data(run_directory, turn_ids, topics):
                                                 if any(passage.get('used', False) for passage in
                                                        resp['passage_provenance']):
                                                     response = resp['text']
-                                                    conversation_id = turn_id + ' ' + run['run_name'] + ' ' + response
-                                                    hashed_conversation_id = hashlib.md5(
-                                                        conversation_id.encode()).hexdigest()
+                                                    if response:
+                                                        conversation_id = turn_id + ' ' + run['run_name'] + ' ' + \
+                                                                          response
+                                                        hashed_conversation_id = hashlib.md5(
+                                                            conversation_id.encode()).hexdigest()
 
-                                                    # Create the JSON object
-                                                    results.append({
-                                                        'conversation_id': hashed_conversation_id,
-                                                        'conversation_context': context,
-                                                        'turn_id': turn_id,
-                                                        'run_id': run['run_name'],
-                                                        'response': f'SYSTEM: {response}'
-                                                    })
-                                                    break
+                                                        # Create the JSON object
+                                                        results.append({
+                                                            'conversation_id': hashed_conversation_id,
+                                                            'conversation_context': context,
+                                                            'turn_id': turn_id,
+                                                            'run_id': run['run_name'],
+                                                            'response': f'SYSTEM: {response}'
+                                                        })
+                                                        break
                 break
 
     # Post-processing to remove duplicates based on conversation_id
@@ -90,14 +92,14 @@ def create_data(run_directory, turn_ids, topics):
     # Create batches ensuring that the same conversation_id doesn't occur twice in the same batch
     batches = []
     batch = []
-    conversation_ids_in_current_batch = set()
+    conversation_ids_in_current_batch = []
     batch_to_turns_dict = {}
     batch_id = 1
 
     for item in unique_results:
         if item['conversation_id'] not in conversation_ids_in_current_batch:
             batch.append(item)
-            conversation_ids_in_current_batch.add(item['conversation_id'])
+            conversation_ids_in_current_batch.append(item['conversation_id'])
 
             if len(batch) == 20:
                 batches.append(batch)
