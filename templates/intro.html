@@ -56,14 +56,25 @@
             <p>
                 Please read each conversation carefully and provide your evaluation using the provided dropdown menus.
             </p>
-            <p>
-                <b>Note.</b> You'll review a total of 40 conversations. After completing them, you'll have the choice
-                to evaluate more. If you decide not to continue, you can easily log out of the system.
-            </p>
+<!--            <p>-->
+<!--                <b>Note.</b> You'll review a total of 40 conversations. After completing them, you'll have the choice-->
+<!--                to evaluate more. If you decide not to continue, you can easily log out of the system.-->
+<!--            </p>-->
             <p>
                 <div class="important-note">
-                    <strong>Important:</strong> Please <b>DO NOT</b> press the forward or backward buttons
-                    of your browser during the task. Doing so will result in the loss of your progress, and you'll need to start over.
+                    <strong>Important:</strong>
+                        <ul>
+                            <li>
+                                Please <b>DO NOT</b> press the forward or backward buttons of your browser during the task.
+                                Doing so will result in the loss of your progress, and you'll need to start over.
+                            </li>
+                            <li>
+                                You'll review a total of 20 conversations. After completing them, you'll see a button asking you if you
+                                want to evaluate more. <b>Ignore the button.</b> You must log out of the system at  this point by clicking
+                                on the logout button.
+                            </li>
+                        </ul>
+
                 </div>
             </p>
             <a href="/index/1" class="btn btn-primary">Start Evaluation</a>
@@ -79,6 +90,8 @@
                     <ul>
                         <li><strong>Relevance:</strong> Does the SYSTEM response follow on from previous utterances?</li>
                         <ul>
+                            <li><strong>-1 Unable to Judge:</strong> Cannot determine the relevance of the response
+                                due to lack of context or other reasons.</li>
                             <li><strong>0 Not Relevant:</strong> Does not follow on from the previous utterances, seems to be completely
                                 random, to the current conversation, seems to be a completely different conversation.
                             <li><strong>1 Partially Relevant:</strong> The response is partially off-topic; may
@@ -88,6 +101,8 @@
                         </ul>
                         <li><strong>Completeness:</strong> Does the SYSTEM response provide a thorough and comprehensive answer to the question posed?</li>
                         <ul>
+                            <li><strong>-1 Unable to Judge:</strong> Cannot determine the completeness of the response
+                                due to lack of context or other reasons.</li>
                             <li><strong>0 No:</strong> The response does not address the question at all or provides information that is entirely unrelated.</li>
                             <li><strong>1 Somewhat:</strong> The response touches on the topic but misses significant details or only addresses one aspect of a multi-part question.</li>
                             <li><strong>2 Yes (but not completely):</strong> The response covers most aspects of the question but may miss minor details or nuances.</li>
@@ -165,3 +180,4 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
+
