@@ -293,6 +293,22 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 
+        document.addEventListener('DOMContentLoaded', (event) => {
+        var textareas = document.querySelectorAll('textarea');
+        textareas.forEach(function(textarea) {
+            textarea.addEventListener('copy', function(e) {
+                e.preventDefault();
+            });
+            textarea.addEventListener('paste', function(e) {
+                e.preventDefault();
+            });
+            textarea.addEventListener('cut', function(e) {
+                e.preventDefault();
+            });
+        });
+    });
+
+
     // Function to check if all questions have been submitted
     function checkAllSubmitted() {
         let allSubmitted = true;
@@ -411,3 +427,4 @@
 
 </body>
 </html>
+
