@@ -117,10 +117,30 @@ def index(page_num=1):
         conversation_context = row[1]
         response = row[4]
 
+        # replace the labels with HTML versions
+        conversation_context = conversation_context.replace("USER: ", "<br><strong>USER: </strong>")
+        conversation_context = conversation_context.replace("SYSTEM:", "<br><strong>SYSTEM: </strong>")
+
+        # split into utterances and strip whitespace
+        context_utterances = list(map(str.strip, conversation_context.split("\n")))
+
+        # if there are more than 4 utterances, display the first and the last 3
+        if len(context_utterances) > 4:
+            first_utterance = context_utterances[0]
+            final_utterances = context_utterances[-3:]
+            utterances_removed = len(context_utterances) - 4
+        else:
+            # otherwise display them all
+            first_utterance = context_utterances[0]
+            final_utterances = context_utterances[1:]
+            utterances_removed = 0
+
         data.append({
             'question_id': row[0],
             'batch_id': session['batch_id'],
-            'conversation_context': conversation_context,
+            'first_utterance' : first_utterance,
+            'final_utterances': final_utterances,
+            'utterances_removed' : utterances_removed,
             'turn_id': row[2],
             'run_id': row[3],
             'response': response

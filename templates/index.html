@@ -107,12 +107,16 @@
             {% for item in data %}
                 <div class="conversation-card">
                     <h3>Conversation</h3>
-                    {% set first_utterance = item.conversation_context.split("\n", 1)[0].replace("USER:", "").strip() %}
-                    <p>
-                        <strong>USER:</strong>{{ first_utterance }}
-                        <span class="animated-ellipsis"></span>
-                    </p>
-                    <p>{{ item.conversation_context.replace("USER: " + first_utterance, "").replace("USER:", "<br><strong>USER:</strong>").replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>
+                        <!-- Show the first utterance -->
+                        {{ item.first_utterance|safe }}
+                        <!-- Indicate to the user that some utterances may have been removed -->
+                        {% if item.utterances_removed > 0 %}
+                            <br><br><em>({{ item.utterances_removed }} responses have been hidden)</em>
+                        {% endif %}
+                        <!-- Display the final utterances -->
+                        {% for utterance in item.final_utterances %}
+                            <p>{{ utterance|safe }}</p>
+                        {% endfor %}
 
                     <div class="response-box">
                         <p>{{ item.response.replace("SYSTEM:", "<br><strong>SYSTEM:</strong>")|safe }}</p>
