@@ -8,6 +8,13 @@ app = Flask(__name__)
 app.secret_key = '5538c01ccd1b985692c3669c6fe5f2b2'
 ITEMS_PER_PAGE = 1
 
+# for pilot study. if True, remove batch selection logic and
+# assign SINGLE_BATCH_ID to every user
+SINGLE_BATCH_MODE = False
+
+# when SINGLE_BATCH_ID is True, every user will be assigned
+# to this batch ID
+SINGLE_BATCH_ID = 1
 
 def insert_evaluation_result(user_id, conversation_id, relevance, completeness,
                              relevance_feedback, completeness_feedback):
@@ -40,35 +47,41 @@ def index(page_num=1):
 
     # If batch_id is not in session, assign one
     if 'batch_id' not in session:
-        # Count batches the user has already been assigned to
-        cursor.execute('''
-            SELECT COUNT(batch_id)
-            FROM batch_assignments
-            WHERE user_id = ?
-        ''', (user_id,))
-        batch_count = cursor.fetchone()[0]
 
-        # If the user has already been assigned to 2 batches and hasn't decided to continue with more batches
-        if batch_count >= 2 and not session.get('continue_with_batches'):
-            return redirect(url_for('ask_for_more_batches'))
+        if not SINGLE_BATCH_MODE:
+            # Count batches the user has already been assigned to
+            cursor.execute('''
+                SELECT COUNT(batch_id)
+                FROM batch_assignments
+                WHERE user_id = ?
+            ''', (user_id,))
+            batch_count = cursor.fetchone()[0]
 
-        # Get a batch that has been assigned to less than 2 users and not assigned to the current user
-        cursor.execute('''
-            SELECT b.batch_id
-            FROM batches b
-            LEFT JOIN batch_assignments ba ON b.batch_id = ba.batch_id AND ba.user_id != ?
-            WHERE ba.batch_id IS NULL OR ba.user_id != ?
-            GROUP BY b.batch_id
-            HAVING COUNT(ba.user_id) < 2
-            LIMIT 1
-        ''', (user_id, user_id))
-        batch = cursor.fetchone()
+            # If the user has already been assigned to 2 batches and hasn't decided to continue with more batches
+            if batch_count >= 2 and not session.get('continue_with_batches'):
+                return redirect(url_for('ask_for_more_batches'))
 
-        if not batch:
-            # No more batches for the user to evaluate
-            return redirect(url_for('thank_you'))
+            # Get a batch that has been assigned to less than 2 users and not assigned to the current user
+            cursor.execute('''
+                SELECT b.batch_id
+                FROM batches b
+                LEFT JOIN batch_assignments ba ON b.batch_id = ba.batch_id AND ba.user_id != ?
+                WHERE ba.batch_id IS NULL OR ba.user_id != ?
+                GROUP BY b.batch_id
+                HAVING COUNT(ba.user_id) < 2
+                LIMIT 1
+            ''', (user_id, user_id))
+            batch = cursor.fetchone()
 
-        batch_id = batch[0]
+            if not batch:
+                # No more batches for the user to evaluate
+                return redirect(url_for('thank_you'))
+
+            batch_id = batch[0]
+        else:
+            print(f'Using single batch mode, assigning ID {SINGLE_BATCH_ID}')
+            batch_id = SINGLE_BATCH_ID
+
         session['batch_id'] = batch_id
         # Clear the continue_with_batches session variable after assigning a new batch
         session.pop('continue_with_batches', None)
