@@ -75,7 +75,7 @@ def index(page_num=1):
 
             if not batch:
                 # No more batches for the user to evaluate
-                return redirect(url_for('thank_you'))
+                return redirect(url_for('no_batches'))
 
             batch_id = batch[0]
         else:
@@ -301,6 +301,11 @@ def thank_you():
         return redirect(url_for('login'))
     return render_template('thank_you.html')
 
+@app.route('/no_batches')
+def no_batches():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('no_batches.html')
 
 @app.route('/', methods=['GET'])
 def main():
