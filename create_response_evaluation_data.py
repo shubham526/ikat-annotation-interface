@@ -59,26 +59,24 @@ def create_data(run_directory, turn_ids, topics):
                                     run = json.load(f)
                                     for r in run['turns']:
                                         if r['turn_id'] == turn_id:
-                                            # Check each response for a passage marked true
                                             for resp in r['responses']:
-                                                if any(passage.get('used', False) for passage in
-                                                       resp['passage_provenance']):
-                                                    response = resp['text']
-                                                    if response:
-                                                        conversation_id = turn_id + ' ' + run['run_name'] + ' ' + \
-                                                                          response
-                                                        hashed_conversation_id = hashlib.md5(
-                                                            conversation_id.encode()).hexdigest()
+                                                # no longer checking for passages marked "true" here
+                                                response = resp['text']
+                                                if response:
+                                                    conversation_id = turn_id + ' ' + run['run_name'] + ' ' + \
+                                                                      response
+                                                    hashed_conversation_id = hashlib.md5(
+                                                        conversation_id.encode()).hexdigest()
 
-                                                        # Create the JSON object
-                                                        results.append({
-                                                            'conversation_id': hashed_conversation_id,
-                                                            'conversation_context': context,
-                                                            'turn_id': turn_id,
-                                                            'run_id': run['run_name'],
-                                                            'response': f'SYSTEM: {response}'
-                                                        })
-                                                        break
+                                                    # Create the JSON object
+                                                    results.append({
+                                                        'conversation_id': hashed_conversation_id,
+                                                        'conversation_context': context,
+                                                        'turn_id': turn_id,
+                                                        'run_id': run['run_name'],
+                                                        'response': f'SYSTEM: {response}'
+                                                    })
+                                                    break
                 break
 
     # Post-processing to remove duplicates based on conversation_id
