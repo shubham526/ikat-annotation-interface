@@ -125,7 +125,8 @@ def index(page_num=1):
         prev_page=prev_page,
         show_rubric=True,
         show_examples=True,
-        is_last_page=is_last_page
+        is_last_page=is_last_page,
+        progress=f"You are on entry number {page_num} of {len(batch_conversations)}"
     )
 
 
